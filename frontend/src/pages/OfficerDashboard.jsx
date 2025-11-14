@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import api from "../api/api";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function OfficerDashboard() {
     const [loans, setLoans] = useState({ pending: [], approved: [], rejected: [] });
@@ -53,53 +54,77 @@ export default function OfficerDashboard() {
 
     const renderLoans = (data) => {
         if (data.length === 0)
-            return <p className="text-center text-gray-600 mt-6">No {activeTab.toLowerCase()} loans.</p>;
+            return (
+                <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="text-center text-gray-600 mt-6"
+                >
+                    No {activeTab.toLowerCase()} loans.
+                </motion.p>
+            );
 
         return (
-            <ul className="space-y-5">
-                {data.map((app) => (
-                    <li
-                        key={app._id}
-                        className="bg-gray-800 border border-gray-700 rounded shadow-sm hover:shadow-md transition-shadow duration-300 p-5"
-                    >
-                        <div className="flex flex-col md:flex-row justify-between md:items-center gap-3">
-                            <div>
-                                <p className="text-gray-300 font-medium space-x-4">
-                                    <span className="text-white">Customer:</span>{" "}
-                                    <span className="text-purple-400">{app.customerId?.userId?.name || "Unknown"}</span>
-                                </p>
-                                <p className="text-gray-400 text-sm">Amount: ₹{app.amountRequested}</p>
-                                <p className="text-gray-400 text-sm">Eligibility Score: {app.eligibilityScore ?? "N/A"}</p>
-                                <p className="text-gray-400 text-sm">Tenure: {app.tenureMonths} months</p>
-                                {app.interestRate && (
-                                    <p className="text-gray-400 text-sm">
-                                        Interest Rate: {app.interestRate.toFixed(2)}%
+            <AnimatePresence mode="wait">
+                <motion.ul
+                    key={activeTab}  // IMPORTANT for tab animation
+                    initial={{ opacity: 0, x: 40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -40 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-5"
+                >
+                    {data.map((app) => (
+                        <motion.li
+                            key={app._id}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.25 }}
+                            className="bg-gray-800 border border-gray-700 rounded shadow-sm hover:shadow-md transition-shadow duration-300 p-5"
+                        >
+                            <div className="flex flex-col md:flex-row justify-between md:items-center gap-3">
+                                <div>
+                                    <p className="text-gray-300 font-medium space-x-4">
+                                        <span className="text-white">Customer:</span>{" "}
+                                        <span className="text-purple-400">
+                                            {app.customerId?.userId?.name || "Unknown"}
+                                        </span>
                                     </p>
+                                    <p className="text-gray-400 text-sm">Amount: ₹{app.amountRequested}</p>
+                                    <p className="text-gray-400 text-sm">Eligibility Score: {app.eligibilityScore ?? "N/A"}</p>
+                                    <p className="text-gray-400 text-sm">Tenure: {app.tenureMonths} months</p>
+                                    {app.interestRate && (
+                                        <p className="text-gray-400 text-sm">
+                                            Interest Rate: {app.interestRate.toFixed(2)}%
+                                        </p>
+                                    )}
+                                </div>
+
+                                {activeTab === "PENDING" && (
+                                    <div className="flex gap-3 mt-2 md:mt-0">
+                                        <button
+                                            onClick={() => review(app._id, "APPROVED")}
+                                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-all"
+                                        >
+                                            Approve
+                                        </button>
+                                        <button
+                                            onClick={() => review(app._id, "REJECTED")}
+                                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-all"
+                                        >
+                                            Reject
+                                        </button>
+                                    </div>
                                 )}
                             </div>
-
-                            {activeTab === "PENDING" && (
-                                <div className="flex gap-3 mt-2 md:mt-0">
-                                    <button
-                                        onClick={() => review(app._id, "APPROVED")}
-                                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-all"
-                                    >
-                                        Approve
-                                    </button>
-                                    <button
-                                        onClick={() => review(app._id, "REJECTED")}
-                                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-all"
-                                    >
-                                        Reject
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </li>
-                ))}
-            </ul>
+                        </motion.li>
+                    ))}
+                </motion.ul>
+            </AnimatePresence>
         );
     };
+
 
     return (
         <section className="bg-gray-900">
@@ -119,7 +144,7 @@ export default function OfficerDashboard() {
                         </p>
                         <p className="mb-1">
                             <span className="font-medium text-gray-200">Role:</span> {user?.role}
-                        </p>                        
+                        </p>
                     </div>
                 </div>
 
@@ -134,8 +159,8 @@ export default function OfficerDashboard() {
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
                                 className={`px-5 py-2 rounded-md font-medium transition-all ${activeTab === tab
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-800 text-gray-400 hover:text-white"
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-gray-800 text-gray-400 hover:text-white"
                                     }`}
                             >
                                 {tab}

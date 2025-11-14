@@ -132,7 +132,7 @@ export default function Register() {
         <Button type="submit" label="Register" className="mt-6 w-full" />
         <p className="text-center text-sm text-gray-600 mt-4">
           Already have an account?{' '}
-          <a href="/login" className="text-blue-600 font-medium hover:underline">
+          <a href="/" className="text-blue-600 font-medium hover:underline">
             Login
           </a>
         </p>
