@@ -15,8 +15,8 @@ export default function Login() {
     e.preventDefault();
     try {
       const res = await api.post('/auth/login', form);
-      const { token, role, user } = res.data;
-      login({ token, role, user });
+      const { token, role, userId } = res.data;
+      login({ token, role, userId });
       toast.success('Logged in');
       if (role === "OFFICER") {
         navigate("/officer")

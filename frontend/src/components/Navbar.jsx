@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 export default function Navbar() {
-    const [menuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
     const { user, logout } = useContext(AuthContext);
 
@@ -26,7 +25,7 @@ export default function Navbar() {
                 </Link>
 
 
-                <ul className="hidden md:flex gap-6 items-center">
+                <ul className="flex gap-6 items-center">
                     {user?.role && (
                         <li>
                             <button
@@ -38,39 +37,7 @@ export default function Navbar() {
                         </li>
                     )}
                 </ul>
-                <button
-                    className="md:hidden text-2xl"
-                    onClick={() => setMenuOpen(!menuOpen)}
-                >
-                    ☰
-                </button>
             </div>
-
-            {menuOpen && (
-                <ul className="md:hidden bg-blue-700 flex flex-col items-center gap-4 py-4">
-                    {menuItems.map((item) => (
-                        <li key={item.name}>
-                            <Link
-                                to={item.path}
-                                onClick={() => setMenuOpen(false)}
-                                className="block text-lg hover:text-yellow-300"
-                            >
-                                {item.name}
-                            </Link>
-                        </li>
-                    ))}
-                    {user?.role && (
-                        <li>
-                            <button
-                                onClick={handleLogout}
-                                className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-white"
-                            >
-                                Logout
-                            </button>
-                        </li>
-                    )}
-                </ul>
-            )}
         </nav>
     );
 }

@@ -18,7 +18,7 @@ exports.register = async (req, res) => {
             return res.json({ message: 'User registered successfully', userId: user._id, role: user.role, customerId: customer._id });
         } else {
             const officer = await LoanOfficer.create({ userId: user._id, branch: branch || '' });
-            return res.json({ message: 'User registered successfully', user: {userId: user._id, name: user.name, email: user.email}, role: user.role, officerId: officer._id });
+            return res.json({ message: 'User registered successfully', userId: user._id, role: user.role, officerId: officer._id });
         }
     } catch (err) {
         console.error(err);
@@ -36,7 +36,7 @@ exports.login = async (req, res) => {
         if (!match) return res.status(400).json({ message: 'Invalid credentials' });
 
         const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET || "mysecretkey", { expiresIn: '8h' });
-        res.json({ token, user: {userId: user._id, email: user.email}, role: user.role });
+        res.json({ token, userId: user._id, role: user.role });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });

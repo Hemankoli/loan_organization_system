@@ -48,3 +48,21 @@ exports.getAllLoans = async (req, res) => {
         res.status(500).json({ message: "Server error while fetching loans" });
     }
 }
+
+exports.getOfficerByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const officer = await LoanOfficer.findOne({ userId }).populate('userId', 'name email');
+    if (!officer) {
+      return res.status(404).json({ message: 'Officer not found' });
+    }
+    res.json({
+      _id: officer._id,
+      name: officer.userId.name,
+      email: officer.userId.email,
+    });
+  } catch (error) {
+    console.error('Error fetching customer by userId:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};

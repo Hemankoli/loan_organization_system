@@ -7,37 +7,39 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
-    const storedUser = localStorage.getItem('user');
-    return token ? { token, role, user: JSON.parse(storedUser) } : null;
+    const userId = localStorage.getItem('userId');
+    return token ? { token, role, userId } : null;
   });
   const [modal, setModal] = useState(false);
   const [customer, setCustomer] = useState(null);
+  const [officer, setOfficer] = useState(null);
   const [applications, setApplications] = useState([]);
 
-  const login = ({ token, role, user }) => {
+  const login = ({ token, role, userId }) => {
     localStorage.setItem('token', token);
     localStorage.setItem('role', role);
-    localStorage.setItem('user', JSON.stringify(user));
-    setUser({ token, role, user });
-  };
-
-  const register = ({ token, role, user }) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('role', role);
-    localStorage.setItem('user', JSON.stringify(user));
-    setUser({ token, role, user });
+    localStorage.setItem('userId', userId);
+    setUser({ token, role, userId });
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-    localStorage.removeItem('user');
+    localStorage.removeItem('userId');
     setUser(null);
   };
 
+  async function loadOfficer() {
+    try {
+      const resCust = await api.get(`/officer/by-officer/${user?.userId}`);
+      setOfficer(resCust.data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
   async function load() {
     try {
-      const resCust = await api.get(`/customer/by-user/${user?.user?.userId}`);
+      const resCust = await api.get(`/customer/by-user/${user?.userId}`);
       setCustomer(resCust.data);
       const resApps = await api.get(`/customer/${resCust.data._id}/applications`);
       setApplications(resApps.data);
@@ -46,5 +48,5 @@ export function AuthProvider({ children }) {
     }
   }
 
-  return <AuthContext.Provider value={{ user, login, register, logout, modal, setModal, customer, applications, load }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, login, logout, modal, setModal, customer, officer, applications, load, loadOfficer }}>{children}</AuthContext.Provider>;
 }

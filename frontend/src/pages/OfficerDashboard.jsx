@@ -7,7 +7,11 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function OfficerDashboard() {
     const [loans, setLoans] = useState({ pending: [], approved: [], rejected: [] });
     const [activeTab, setActiveTab] = useState("PENDING");
-    const { user } = useContext(AuthContext);
+    const { user, officer, loadOfficer } = useContext(AuthContext);
+
+    useEffect(() => {
+        if (user) loadOfficer();
+    }, [user]);
 
     useEffect(() => {
         async function load() {
@@ -31,7 +35,7 @@ export default function OfficerDashboard() {
         try {
             const res = await api.post(`/officer/loans/${id}/review`, {
                 decision,
-                officerUserId: user?.user?.userId,
+                officerUserId: user?.userId,
             });
             toast.success(res.data.message);
 
@@ -68,7 +72,7 @@ export default function OfficerDashboard() {
         return (
             <AnimatePresence mode="wait">
                 <motion.ul
-                    key={activeTab}  // IMPORTANT for tab animation
+                    key={activeTab} 
                     initial={{ opacity: 0, x: 40 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -40 }}
@@ -135,12 +139,12 @@ export default function OfficerDashboard() {
                     <h3 className="text-lg font-semibold text-center text-white mb-6">
                         Welcome,{" "}
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-                            {user?.user?.email}
+                            {officer?.name}
                         </span>
                     </h3>
                     <div className="mt-6 bg-white/10 rounded-sm p-4 text-sm text-gray-300 border border-white/10">
                         <p className="mb-1">
-                            <span className="font-medium text-gray-200">Email:</span> {user?.user?.email}
+                            <span className="font-medium text-gray-200">Email:</span> {officer?.email}
                         </p>
                         <p className="mb-1">
                             <span className="font-medium text-gray-200">Role:</span> {user?.role}

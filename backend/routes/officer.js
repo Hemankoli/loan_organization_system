@@ -7,5 +7,6 @@ const { requireRole } = require('../middlewares/roleMiddleware');
 router.get('/loans/pending', auth, requireRole('OFFICER'), officerController.getPending);
 router.post('/loans/:id/review', auth, requireRole('OFFICER'), officerController.reviewLoan);
 router.get("/loans/all", officerController.getAllLoans);
+router.get('/by-officer/:userId', officerController.getOfficerByUserId);
 
 module.exports = router;
