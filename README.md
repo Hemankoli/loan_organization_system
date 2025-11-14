@@ -152,29 +152,32 @@ Default: PENDING
 Admin reviews to APPROVE or REJECT
 
 🖥️ Project Structure
-/client
+/frontend
    /src
       /components
       /context
       /pages
-      /utils
+      /apis
+      /layout
+      AppRoute.jsx
       App.jsx
       index.jsx
 
-/server
+/backend
    /controllers
    /models
    /routes
    /middleware
-   server.js
+   /services
+   index.js
 
 🔧 Installation & Setup
 1. Clone Repo
-git clone https://github.com/yourusername/loan-management-system.git
-cd loan-management-system
+git clone https://github.com/Hemankoli/loan_organization_system.git
+cd loan_organization_system
 
 ⚙️ Backend Setup
-cd server
+cd backend
 npm install
 
 
@@ -182,7 +185,8 @@ Create .env:
 
 MONGO_URI=your_mongo_url
 JWT_SECRET=your_secret
-PORT=5000
+PORT=your_port
+ELIGIBILITY_THRESHOLD=
 
 
 Start backend:
@@ -190,7 +194,7 @@ Start backend:
 npm run dev
 
 🎨 Frontend Setup
-cd client
+cd frontend
 npm install
 npm run dev
 
